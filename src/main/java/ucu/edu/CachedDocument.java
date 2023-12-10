@@ -26,15 +26,15 @@ public class CachedDocument extends SmartDocument {
     }
 
     private String getCachedText() {
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-            PreparedStatement pstmt = conn.
+        try (Connection CONN = DriverManager.getConnection(DB_URL);
+            PreparedStatement PSTMT = CONN.
                 prepareStatement(
                     "SELECT content FROM cache WHERE gcsPath = ?")) {
 
-            pstmt.setString(1, getGcsPath());
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getString("content");
+            PSTMT.setString(1, getGcsPath());
+            try (ResultSet RS = PSTMT.executeQuery()) {
+                if (RS.next()) {
+                    return RS.getString("content");
                 }
             }
         } catch (SQLException e) {
@@ -44,13 +44,13 @@ public class CachedDocument extends SmartDocument {
     }
 
     private void cacheText(String text) {
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-             PreparedStatement pstmt = conn.prepareStatement(
+        try (Connection CONN = DriverManager.getConnection(DB_URL);
+             PreparedStatement PSTMT = CONN.prepareStatement(
                 "INSERT INTO cache (gcsPath, content) VALUES (?, ?)")) {
 
-            pstmt.setString(1, getGcsPath());
-            pstmt.setString(2, text);
-            pstmt.executeUpdate();
+            PSTMT.setString(1, getGcsPath());
+            PSTMT.setString(2, text);
+            PSTMT.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();
